@@ -72,7 +72,7 @@ contract Token {
         // Setup defaults
         name = "PIE (Authorito Capital)";
         symbol = "PIE";
-        decimals = 0;
+        decimals = 18;
 
         /* Setup access to our other contracts */
         authenticationManager = AuthenticationManager(_authenticationManagerAddress);        

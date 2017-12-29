@@ -15,10 +15,10 @@ contract Tokensale {
     bool public salePhase = true;
 
     /* Defines the sale price of ethereum during Sale */
-    uint256 public ethereumSaleRate = 4 finney;
+    uint256 public ethereumSaleRate = 700; // The number of tokens to be minted for every ETH
 
     /* Defines the sale price of bitcoin during Sale */
-    uint256 public bitcoinSaleRate = 3500;
+    uint256 public bitcoinSaleRate = 14000; // The number of tokens to be minted for every BTC
 
     /* Defines our interface to the  Token contract. */
     Token token;
@@ -55,6 +55,7 @@ contract Tokensale {
 
     /* Ensures that once the Sale is over this contract cannot be used until the point it is destructed. */
     modifier onlyDuringSale {
+
         if (!tokenContractDefined || (!salePhase)) throw;
         _;
     }
@@ -99,7 +100,7 @@ contract Tokensale {
             require(outputValue1 >= minimunBTCToInvest);
 
              //multiply by exchange rate
-            uint256 tokensPurchased = outputValue1 / bitcoinSaleRate;
+            uint256 tokensPurchased = outputValue1 * bitcoinSaleRate * (10**10);  
 
             token.mintTokens(ethereumAddress, tokensPurchased);
 
@@ -131,21 +132,13 @@ contract Tokensale {
         
         uint256 weiAmount = msg.value;
 
-        uint256 tokensPurchased = weiAmount / ethereumSaleRate;
-
-        uint256 purchaseTotalPrice = tokensPurchased * ethereumSaleRate;
-        
-        uint256 change = weiAmount.sub(purchaseTotalPrice);
+        uint256 tokensPurchased = weiAmount.mul(ethereumSaleRate);
         
         /* Increase their new balance if they actually purchased any */
         if (tokensPurchased > 0)
         {
             token.mintTokens(beneficiary, tokensPurchased);
         }
-
-        /* Send change back to recipient */
-        if (change > 0 && !beneficiary.send(change))
-            throw;
     }
 
     // @return true if the transaction can buy tokens
